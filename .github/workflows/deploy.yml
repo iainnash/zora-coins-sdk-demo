@@ -35,6 +35,8 @@ jobs:
       - name: Build
         run: npm run build
         working-directory: ./zora-coin-creator
+        env:
+          VITE_ZORA_API_KEY: ${{ secrets.VITE_ZORA_API_KEY }}
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
