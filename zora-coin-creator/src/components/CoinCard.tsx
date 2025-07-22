@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, useWalletClient, usePublicClient } from 'wagmi'
+import { useAccount, useWaitForTransactionReceipt, useWalletClient, usePublicClient } from 'wagmi'
 import { tradeCoin } from '@zoralabs/coins-sdk'
 import { parseEther } from 'viem'
 

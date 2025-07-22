@@ -13,7 +13,7 @@ interface Coin {
   imageUrl?: string
   marketCap?: string
   volume24h?: string
-  priceChange24h?: string
+  priceChange24h?: number
   address: string
 }
 
@@ -57,7 +57,7 @@ export function CoinsList() {
           imageUrl: coin.mediaContent?.previewImage?.medium,
           marketCap: coin.marketCap,
           volume24h: coin.volume24h,
-          priceChange24h: coin.marketCapDelta24h,
+          priceChange24h: parseInt(coin.marketCapDelta24h, 10),
           address: coin.address,
         }
       }) || []
