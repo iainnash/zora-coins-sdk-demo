@@ -38,11 +38,17 @@ jobs:
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
+
+      - name: Make result dir
+        run: mkdir -p ./output
+      
+      - name: Move output file
+        run: mv ./zora-coin-creator/dist ./output/zora-coin-creator
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './zora-coin-creator/dist'
+          path: './output'
 
   deploy:
     environment:
