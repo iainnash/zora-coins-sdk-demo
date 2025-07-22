@@ -58,8 +58,9 @@ export function CoinCard({ coin }: CoinCardProps) {
       const receipt = await tradeCoin({
         tradeParameters,
         walletClient,
-        account: address,
         publicClient,
+        // todo fix type
+        account: address as any,
       })
 
       setHash(receipt.transactionHash)

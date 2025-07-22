@@ -33,7 +33,7 @@ jobs:
         working-directory: ./zora-coin-creator
       
       - name: Build
-        run: npm run build --skip-type-check
+        run: npm run build
         working-directory: ./zora-coin-creator
       
       - name: Setup Pages

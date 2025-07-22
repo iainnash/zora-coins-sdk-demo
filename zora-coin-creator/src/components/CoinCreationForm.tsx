@@ -3,7 +3,7 @@ import { useAccount, useChainId } from 'wagmi'
 import { createMetadataBuilder, createZoraUploaderForCreator, DeployCurrency, createCoinCall } from '@zoralabs/coins-sdk'
 import { type Address } from 'viem'
 import { useWriteContract } from 'wagmi'
-import { base, baseSepolia } from 'wagmi/chains'
+import { base } from 'viem/chains'
 import { TransactionStatus } from './TransactionStatus'
 import { NetworkChecker } from './NetworkChecker'
 
@@ -29,7 +29,7 @@ export function CoinCreationForm() {
 
   const { writeContract, data: hash, error: writeError } = useWriteContract()
 
-  const isOnSupportedNetwork = chainId === base.id || chainId === baseSepolia.id
+  const isOnSupportedNetwork = chainId === base.id
 
   if (!isConnected) {
     return (
@@ -101,14 +101,14 @@ export function CoinCreationForm() {
         ...createMetadataParameters,
         payoutRecipient: address as Address,
         currency: DeployCurrency.ZORA,
-        chainId: chainId, // Use current chain ID
+        chainId: base.id,
       }
 
       // Get the contract call parameters
       const contractCallParams = await createCoinCall(createCoinArgs)
 
-      // Execute the transaction
-      writeContract(contractCallParams)
+      // Execute the transaction on base
+      writeContract({...contractCallParams, chain: base})
 
       setSuccess('Transaction submitted! Waiting for confirmation...')
     } catch (err) {
