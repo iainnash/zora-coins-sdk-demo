@@ -1,69 +1,72 @@
-# React + TypeScript + Vite
+# Zora Coin Creator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web application for creating and trading Zora coins using the Zora Protocol SDK. Create custom ERC20 tokens and discover trending coins on Base network.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Create Coins**: Launch custom ERC20 tokens with metadata and IPFS upload
+- **Discover Coins**: Browse top gainers, volume leaders, and most valuable coins
+- **Trade Coins**: Buy coins with 0.01 ETH using built-in trading functionality
+- **Wallet Integration**: MetaMask, Coinbase Wallet, and WalletConnect support
+- **Base Network**: Optimized for Base mainnet and testnet
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. Configure environment variables:
+   ```bash
+   cp .env.example .env
+   # Add your Zora API key and WalletConnect project ID
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+3. Start development server:
+   ```bash
+   npm run dev
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Development Commands
+
+```bash
+# Development
+npm run dev          # Start development server
+
+# Building
+npm run build        # Build for production
+npm run preview      # Preview production build
+
+# Linting
+npm run lint         # Run ESLint
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Requirements
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Node.js**: v22+ (required for Vite 7 and @zoralabs/coins-sdk compatibility)
+- **Web3 Wallet**: MetaMask, Coinbase Wallet, or WalletConnect compatible
+- **Network**: Base mainnet or Base Sepolia testnet
+- **Gas Fees**: ETH on Base network for transactions
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Environment Variables
+
+```bash
+# Required for coin creation media uploads
+VITE_ZORA_API_KEY=your_zora_api_key_here
+
+# Optional - enables WalletConnect support
+VITE_WALLETCONNECT_PROJECT_ID=your_project_id_here
 ```
+
+Get your Zora API key from [Zora developer settings](https://zora.co) and WalletConnect project ID from [WalletConnect Cloud](https://cloud.walletconnect.com).
+
+## Usage
+
+1. **Create Coins**: Connect wallet → Fill form → Upload metadata → Deploy coin
+2. **Browse Coins**: Navigate to "Buy Coins" → Select category → View trending coins  
+3. **Trade Coins**: Click "Buy 0.01 ETH" on any coin → Confirm transaction
+
+## License
+
+MIT
