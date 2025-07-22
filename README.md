@@ -4,6 +4,8 @@ These are not production ready and should be used as example projects for https:
 
 ### `zora-coin-creator`
 
+Demo: https://iainnash.github.io/zora-coins-sdk-demo/zora-coin-creator/
+
 Demo app for creating and buying top wallets with a connected EOA using react, the ZORA coins SDK created with claude code including a todo list and included logs.
 
 ![buy](./zora-coin-creator/screenshots/buy.png)
