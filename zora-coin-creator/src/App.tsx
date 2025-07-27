@@ -3,6 +3,7 @@ import './App.css'
 import { Navigation } from './components/Navigation'
 import { CreateCoin } from './pages/CreateCoin'
 import { CoinsList } from './pages/CoinsList'
+import { Profile } from './pages/Profile'
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<CreateCoin />} />
           <Route path="/coins" element={<CoinsList />} />
+          <Route path="/profile/:identifier" element={<Profile />} />
         </Routes>
 
         <footer className="app-footer">
