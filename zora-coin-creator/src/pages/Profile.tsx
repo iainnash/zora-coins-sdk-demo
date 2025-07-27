@@ -92,7 +92,7 @@ export function Profile() {
         creatorCoin: profileData.creatorCoin
       } as ProfileData
     },
-    enabled: Boolean(identifier && isConnected),
+    enabled: Boolean(identifier),
     staleTime: 1000 * 60 * 5, // 5 minutes
     retry: 2
   })
@@ -123,7 +123,7 @@ export function Profile() {
         address: coinData.address
       } as CoinData
     },
-    enabled: Boolean(profile?.creatorCoin?.address && isConnected),
+    enabled: Boolean(profile?.creatorCoin?.address),
     staleTime: 1000 * 60 * 2, // 2 minutes
     retry: 1
   })
@@ -227,15 +227,17 @@ export function Profile() {
         error: ''
       })
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       let errorMessage = 'Trade failed'
       
-      if (err.message?.includes('insufficient')) {
-        errorMessage = 'Insufficient ETH for transaction'
-      } else if (err.message?.includes('rejected') || err.message?.includes('denied')) {
-        errorMessage = 'Transaction signature rejected'
-      } else if (err.message?.includes('reverted')) {
-        errorMessage = 'Swap failed - try adjusting slippage'
+      if (err instanceof Error) {
+        if (err.message.includes('insufficient')) {
+          errorMessage = 'Insufficient ETH for transaction'
+        } else if (err.message.includes('rejected') || err.message.includes('denied')) {
+          errorMessage = 'Transaction signature rejected'
+        } else if (err.message.includes('reverted')) {
+          errorMessage = 'Swap failed - try adjusting slippage'
+        }
       }
 
       setTradeState(prev => ({ 
@@ -270,20 +272,6 @@ export function Profile() {
   const loading = profileLoading || coinLoading || balanceLoading
   const error = profileError || coinError
 
-  if (!isConnected) {
-    return (
-      <div className="page">
-        <header className="page-header">
-          <h1>Profile</h1>
-          <p>Connect your wallet to view profiles</p>
-        </header>
-        
-        <main className="page-main">
-          <WalletConnection />
-        </main>
-      </div>
-    )
-  }
 
   if (loading) {
     return (
@@ -293,7 +281,7 @@ export function Profile() {
         </header>
         
         <main className="page-main">
-          <NetworkChecker />
+          {isConnected && <NetworkChecker />}
           <div className="loading-state">
             <p>Loading profile...</p>
             <div className="loading-spinner">⏳</div>
@@ -311,7 +299,7 @@ export function Profile() {
         </header>
         
         <main className="page-main">
-          <NetworkChecker />
+          {isConnected && <NetworkChecker />}
           <div className="error-message">
             {error instanceof Error ? error.message : 'Failed to fetch profile data'}
           </div>
@@ -331,7 +319,7 @@ export function Profile() {
         </header>
         
         <main className="page-main">
-          <NetworkChecker />
+          {isConnected && <NetworkChecker />}
           <div className="empty-state">
             <p>Profile not found</p>
             <button onClick={() => refetchProfile()} className="retry-button">
@@ -351,7 +339,7 @@ export function Profile() {
       </header>
 
       <main className="page-main">
-        <NetworkChecker />
+        {isConnected && <NetworkChecker />}
 
         <div className="profile-container">
           <div className="profile-info">
@@ -426,103 +414,112 @@ export function Profile() {
             <div className="trading-section">
               <h3>Trade {coin.symbol}</h3>
               
-              {/* User Balance Display */}
-              {userBalance && (
-                <div className="user-balance">
-                  <h4>Your Balance</h4>
-                  <p>{formatTokenAmount(userBalance)} {coin.symbol}</p>
+              {!isConnected ? (
+                <div className="wallet-connection">
+                  <p>Connect your wallet to trade {coin.symbol}</p>
+                  <WalletConnection />
                 </div>
-              )}
-
-              {/* Buy Section */}
-              <div className="trade-card">
-                <h4>Buy {coin.symbol}</h4>
-                <div className="trade-input">
-                  <label>ETH Amount:</label>
-                  <input
-                    type="number"
-                    step="0.001"
-                    placeholder="0.01"
-                    value={tradeState.type === 'buy' ? tradeState.amount : ''}
-                    onChange={(e) => handleAmountChange(e.target.value, 'buy')}
-                    disabled={tradeState.isTrading}
-                  />
-                </div>
-                {tradeState.type === 'buy' && tradeState.expectedOutput && (
-                  <div className="expected-output">
-                    Expected: {formatTokenAmount(tradeState.expectedOutput)} {coin.symbol}
-                  </div>
-                )}
-                <button
-                  onClick={() => executeTrade('buy')}
-                  disabled={tradeState.isTrading || !tradeState.amount || tradeState.type !== 'buy'}
-                  className="trade-button buy-button"
-                >
-                  {tradeState.isTrading && tradeState.type === 'buy' ? 'Buying...' : `Buy ${coin.symbol}`}
-                </button>
-              </div>
-
-              {/* Sell Section */}
-              {userBalance && formatTokenAmount(userBalance) > 0 && (
-                <div className="trade-card">
-                  <h4>Sell {coin.symbol}</h4>
-                  
-                  {/* Percentage Buttons */}
-                  <div className="percentage-buttons">
-                    {[25, 50, 75, 100].map(percent => (
-                      <button
-                        key={percent}
-                        onClick={() => handlePercentageSell(percent)}
-                        disabled={tradeState.isTrading}
-                        className={`percentage-button ${sellPercentage === percent ? 'active' : ''}`}
-                      >
-                        {percent}%
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Exact Amount Input */}
-                  <div className="trade-input">
-                    <label>{coin.symbol} Amount:</label>
-                    <input
-                      type="number"
-                      step="0.000001"
-                      placeholder="0"
-                      value={tradeState.type === 'sell' ? formatTokenAmount(tradeState.amount || '0').toString() : ''}
-                      onChange={(e) => {
-                        const ethAmount = e.target.value
-                        if (ethAmount) {
-                          const weiAmount = parseEther(ethAmount).toString()
-                          handleAmountChange(weiAmount, 'sell')
-                        } else {
-                          setTradeState(prev => ({ ...prev, amount: '', expectedOutput: '' }))
-                        }
-                        setSellPercentage(0)
-                      }}
-                      disabled={tradeState.isTrading}
-                    />
-                  </div>
-
-                  {tradeState.type === 'sell' && tradeState.expectedOutput && (
-                    <div className="expected-output">
-                      Expected: {formatEther(BigInt(tradeState.expectedOutput))} ETH
+              ) : (
+                <div className="trading-content">
+                  {/* User Balance Display */}
+                  {userBalance && (
+                    <div className="user-balance">
+                      <h4>Your Balance</h4>
+                      <p>{formatTokenAmount(userBalance)} {coin.symbol}</p>
                     </div>
                   )}
 
-                  <button
-                    onClick={() => executeTrade('sell')}
-                    disabled={tradeState.isTrading || !tradeState.amount || tradeState.type !== 'sell'}
-                    className="trade-button sell-button"
-                  >
-                    {tradeState.isTrading && tradeState.type === 'sell' ? 'Selling...' : `Sell ${coin.symbol}`}
-                  </button>
-                </div>
-              )}
+                  {/* Buy Section */}
+                  <div className="trade-card">
+                    <h4>Buy {coin.symbol}</h4>
+                    <div className="trade-input">
+                      <label>ETH Amount:</label>
+                      <input
+                        type="number"
+                        step="0.001"
+                        placeholder="0.01"
+                        value={tradeState.type === 'buy' ? tradeState.amount : ''}
+                        onChange={(e) => handleAmountChange(e.target.value, 'buy')}
+                        disabled={tradeState.isTrading}
+                      />
+                    </div>
+                    {tradeState.type === 'buy' && tradeState.expectedOutput && (
+                      <div className="expected-output">
+                        Expected: {formatTokenAmount(tradeState.expectedOutput)} {coin.symbol}
+                      </div>
+                    )}
+                    <button
+                      onClick={() => executeTrade('buy')}
+                      disabled={tradeState.isTrading || !tradeState.amount || tradeState.type !== 'buy'}
+                      className="trade-button buy-button"
+                    >
+                      {tradeState.isTrading && tradeState.type === 'buy' ? 'Buying...' : `Buy ${coin.symbol}`}
+                    </button>
+                  </div>
 
-              {/* Error Display */}
-              {tradeState.error && (
-                <div className="trade-error">
-                  {tradeState.error}
+                  {/* Sell Section */}
+                  {userBalance && formatTokenAmount(userBalance) > 0 && (
+                    <div className="trade-card">
+                      <h4>Sell {coin.symbol}</h4>
+                      
+                      {/* Percentage Buttons */}
+                      <div className="percentage-buttons">
+                        {[25, 50, 75, 100].map(percent => (
+                          <button
+                            key={percent}
+                            onClick={() => handlePercentageSell(percent)}
+                            disabled={tradeState.isTrading}
+                            className={`percentage-button ${sellPercentage === percent ? 'active' : ''}`}
+                          >
+                            {percent}%
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Exact Amount Input */}
+                      <div className="trade-input">
+                        <label>{coin.symbol} Amount:</label>
+                        <input
+                          type="number"
+                          step="0.000001"
+                          placeholder="0"
+                          value={tradeState.type === 'sell' ? formatTokenAmount(tradeState.amount || '0').toString() : ''}
+                          onChange={(e) => {
+                            const ethAmount = e.target.value
+                            if (ethAmount) {
+                              const weiAmount = parseEther(ethAmount).toString()
+                              handleAmountChange(weiAmount, 'sell')
+                            } else {
+                              setTradeState(prev => ({ ...prev, amount: '', expectedOutput: '' }))
+                            }
+                            setSellPercentage(0)
+                          }}
+                          disabled={tradeState.isTrading}
+                        />
+                      </div>
+
+                      {tradeState.type === 'sell' && tradeState.expectedOutput && (
+                        <div className="expected-output">
+                          Expected: {formatEther(BigInt(tradeState.expectedOutput))} ETH
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => executeTrade('sell')}
+                        disabled={tradeState.isTrading || !tradeState.amount || tradeState.type !== 'sell'}
+                        className="trade-button sell-button"
+                      >
+                        {tradeState.isTrading && tradeState.type === 'sell' ? 'Selling...' : `Sell ${coin.symbol}`}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Error Display */}
+                  {tradeState.error && (
+                    <div className="trade-error">
+                      {tradeState.error}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

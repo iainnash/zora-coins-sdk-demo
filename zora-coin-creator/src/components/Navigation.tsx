@@ -24,6 +24,12 @@ export function Navigation() {
         >
           Buy Coins
         </Link>
+        <Link 
+          to="/profiles" 
+          className={`nav-link ${location.pathname === '/profiles' ? 'active' : ''}`}
+        >
+          Profiles
+        </Link>
       </div>
     </nav>
   )

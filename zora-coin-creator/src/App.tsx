@@ -4,6 +4,7 @@ import { Navigation } from './components/Navigation'
 import { CreateCoin } from './pages/CreateCoin'
 import { CoinsList } from './pages/CoinsList'
 import { Profile } from './pages/Profile'
+import { Profiles } from './pages/Profiles'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<CreateCoin />} />
           <Route path="/coins" element={<CoinsList />} />
+          <Route path="/profiles" element={<Profiles />} />
           <Route path="/profile/:identifier" element={<Profile />} />
         </Routes>
 

@@ -59,8 +59,7 @@ export function CoinCard({ coin }: CoinCardProps) {
         tradeParameters,
         walletClient,
         publicClient,
-        // todo fix type
-        account: address as any,
+        account: address,
       })
 
       setHash(receipt.transactionHash)
