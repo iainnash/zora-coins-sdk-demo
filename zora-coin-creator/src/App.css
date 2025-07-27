@@ -42,6 +42,32 @@
   text-decoration: none;
 }
 
+.demo-banner {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 1rem 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.demo-banner p {
+  margin: 0;
+  color: #374151;
+  font-weight: 400;
+}
+
+.demo-banner a {
+  color: #16a34a;
+  font-weight: 500;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.demo-banner a:hover {
+  color: #15803d;
+}
+
 .wallet-connection, .wallet-connected {
   background: #f9fafb;
   border: 1px solid #e5e7eb;

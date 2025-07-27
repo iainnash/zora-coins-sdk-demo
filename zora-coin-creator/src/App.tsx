@@ -12,6 +12,19 @@ function App() {
       <div className="app">
         <Navigation />
         
+        <div className="demo-banner">
+          <p>
+            This is a Zora Coins SDK demo - all source code available at{' '}
+            <a 
+              href="https://github.com/iainnash/zora-coins-sdk-demo" 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          </p>
+        </div>
+        
         <Routes>
           <Route path="/" element={<CreateCoin />} />
           <Route path="/coins" element={<CoinsList />} />

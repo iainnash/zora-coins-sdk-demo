@@ -21,19 +21,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: latest
+      
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-          cache: 'npm'
-          cache-dependency-path: './zora-coin-creator/package-lock.json'
+          node-version: '22'
+          cache: 'pnpm'
       
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
         working-directory: ./zora-coin-creator
       
       - name: Build
-        run: npm run build
+        run: pnpm run build
         working-directory: ./zora-coin-creator
         env:
           VITE_ZORA_API_KEY: ${{ secrets.VITE_ZORA_API_KEY }}
